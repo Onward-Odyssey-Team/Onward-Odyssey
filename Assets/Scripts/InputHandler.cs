@@ -12,6 +12,9 @@ public class InputHandler : MonoBehaviour
     private Text clicktext;
     private Text clicktext2;
     private Text clicktext3;
+
+    [SerializeField] private GameObject bananaForestAction;
+
     private int num = 0;
     private int num2 = 0;
     private int num3 = 0;
@@ -55,7 +58,11 @@ public class InputHandler : MonoBehaviour
                 if ((int)reID.value == 1)
                 {
                     num = num + 1;
-                    clicktext.text = "Bananas: " + num.ToString();
+                //    clicktext.text = "Bananas: " + num.ToString();
+
+                    bananaForestAction.SetActive(true);
+                    objec.GetComponent<SpriteRenderer>().color = new Color(0.2352941f, 1f, 0f, 1f);
+
                 }
                 if ((int)reID.value == 2)
                 {

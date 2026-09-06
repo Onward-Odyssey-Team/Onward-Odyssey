@@ -1,2 +1,12 @@
 fileFormatVersion: 2
 guid: 1fde7d3cfb225c547b1db34e6f4dd5f8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - bananaForestAction: {fileID: 3730010894904598511, guid: 0855862ebdba2b74dab97e945814e754, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
