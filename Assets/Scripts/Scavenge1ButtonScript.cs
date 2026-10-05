@@ -11,7 +11,6 @@ public class Scavenge1ButtonScript : MonoBehaviour
     //private Text IndicatorText2;
     //private Text IndicatorText3;
     //private Text IndicatorText4;
-    private Text RoundText;
     private Text PlayerText;
     private Text PlaceText;
     [SerializeField] private GameObject Player;
@@ -35,7 +34,6 @@ public class Scavenge1ButtonScript : MonoBehaviour
          //Transform indicatorTransform4 = canvasTransform.Find(PlayerUI.name + "/HealthText");
          //IndicatorText4 = indicatorTransform4.GetComponent<Text>();
 
-        RoundText = GameObject.Find("RoundText").GetComponent<Text>();
         PlayerText = GameObject.Find("PlayerText").GetComponent<Text>();
 
         Player.GetComponent<Variables>().declarations.GetDeclaration("Action").value = "Cut Tree";
@@ -56,14 +54,9 @@ public class Scavenge1ButtonScript : MonoBehaviour
         bananaForestAction.SetActive(false);
         //round update after fourth player
         System.GetComponent<Variables>().declarations.GetDeclaration("Turn").value = (int)System.GetComponent<Variables>().declarations.GetDeclaration("Turn").value + 1;
-        if ((int)System.GetComponent<Variables>().declarations.GetDeclaration("Turn").value >= 5)
-        {
-            System.GetComponent<Variables>().declarations.GetDeclaration("Turn").value = 1;
-            System.GetComponent<Variables>().declarations.GetDeclaration("Round").value = (int)System.GetComponent<Variables>().declarations.GetDeclaration("Round").value + 1;
-            RoundText.text = "Round " + System.GetComponent<Variables>().declarations.GetDeclaration("Round").value.ToString();
-        }
         PlayerText.text = "Player" + (int)System.GetComponent<Variables>().declarations.GetDeclaration("Turn").value;
         Player = GameObject.Find("Player" + System.GetComponent<Variables>().declarations.GetDeclaration("Turn").value.ToString());
+        System.GetComponent<Variables>().declarations.GetDeclaration("ReadyPlayer").value = (int)System.GetComponent<Variables>().declarations.GetDeclaration("ReadyPlayer").value + 1;
         //resource = Player.GetComponent<Variables>().declarations.GetDeclaration("Wood");
         //update stat
         //IndicatorText.text = "Woods: " + resource.value.ToString();
