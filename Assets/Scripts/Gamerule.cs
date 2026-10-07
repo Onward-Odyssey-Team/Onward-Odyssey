@@ -15,7 +15,8 @@ public class Gamerule : MonoBehaviour
     private Text IndicatorText3;
     private Text IndicatorText4;
     [SerializeField] private GameObject PlayerUI;
-    void Update()
+    [SerializeField] private GameObject ResultUi;
+    async void Update()
     {
         int once = 0;
         if (once == 0)
@@ -68,12 +69,38 @@ public class Gamerule : MonoBehaviour
             {
             Debug.Log(plr);
             }
+            Debug.Log(BananaForest.Count);
             Debug.Log("End");
 
             
             //bananaforest event started when player gone into the place > 0
             if (BananaForest.Count > 0)
             {
+                //clone the result ui
+                GameObject cloneui = Instantiate(ResultUi, ResultUi.transform.parent);
+                cloneui.SetActive(true);
+                cloneui.name = "CurrentResultUI";
+                Text titleres = cloneui.transform.Find("TitleResult").GetComponent<Text>();
+                Text playerres = cloneui.transform.Find("AllPlayerResult").GetComponent<Text>();
+                Text changeres = cloneui.transform.Find("Changelog").GetComponent<Text>();
+
+                titleres.text = "Banana Forest";
+                if (BananaForest.Count == 1)
+                {
+                    playerres.text = BananaForest[0];
+                }
+                if (BananaForest.Count == 2)
+                {
+                    playerres.text = BananaForest[0] + " VS " + BananaForest[1];
+                }
+                if (BananaForest.Count == 3)
+                {
+                    playerres.text = BananaForest[0] + " VS " + BananaForest[1] + " VS " + BananaForest[2];
+                }
+                if (BananaForest.Count == 4)
+                {
+                    playerres.text = BananaForest[0] + " VS " + BananaForest[1] + " VS " + BananaForest[2] + " VS " + BananaForest[3];
+                }
                 //is there ambush or not?
                 int ambush = 0;
                 foreach(string plr in BananaForest)
@@ -90,34 +117,103 @@ public class Gamerule : MonoBehaviour
                         if (GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("Action").value.ToString() == "Cut Tree")
                          {
                          GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("StoredWood").value = (int)GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("StoredWood").value + 1;
+                         changeres.text = "Gain +1 wood";
                          }
                         if (GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("Action").value.ToString() == "Gather Banana")
                          {
                          GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("StoredBanana").value = (int)GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("StoredBanana").value + 3;
+                         changeres.text = "Gathered +3 bananas";
                          }
                     }
                 }
                  if (BananaForest.Count == 2)
                 {
-                    if(ambush >= 0)
+                    if(ambush <= 0)
                     {
                       GameObject.Find(BananaForest[0]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(BananaForest[0]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + (int)GameObject.Find(BananaForest[1]).GetComponent<Variables>().declarations.GetDeclaration("Damage").value;
                       GameObject.Find(BananaForest[1]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(BananaForest[1]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + (int)GameObject.Find(BananaForest[0]).GetComponent<Variables>().declarations.GetDeclaration("Damage").value;
+                      changeres.text = "a Fight happened, both took each other's attacks";
+                    }
+                     if(ambush == 1)
+                    {
+                    int ambushedplr = -1;
+           
+                      for(int i = 0;i < BananaForest.Count;i++)
+                        {
+                            
+                        if (GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("Action").value == "Ambush")
+                            {
+                                ambushedplr = i;
+                            }
+                        }
+                        for(int i = 0;i < BananaForest.Count;i++)
+                        {
+                            Debug.Log("This is the " + i + " Loop/" + BananaForest.Count);
+                        if(i != ambushedplr)
+                            {
+                            GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + (int)GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("Damage").value;
+                            if (GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("Action").value == "Gather Banana")
+                                {
+                                GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredBanana").value = (int)GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredBanana").value + 3;
+                                changeres.text = "an Ambush happened, " + BananaForest[ambushedplr] + " attacked " + BananaForest[i] + " and took 3 bananas";
+                                }
+                            if (GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("Action").value == "Cut Tree")
+                                {
+                                GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredWood").value = (int)GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredWood").value + 1;
+                                changeres.text = "an Ambush happened, " + BananaForest[ambushedplr] + " attacked " + BananaForest[i] + " and took 1 wood";
+                                }
+                            }
+                        }
+                    }
+                     if(ambush == 2)
+                    {
+                    GameObject.Find(BananaForest[0]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(BananaForest[0]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + (int)GameObject.Find(BananaForest[1]).GetComponent<Variables>().declarations.GetDeclaration("Damage").value;
+                    GameObject.Find(BananaForest[1]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(BananaForest[1]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + (int)GameObject.Find(BananaForest[0]).GetComponent<Variables>().declarations.GetDeclaration("Damage").value;  
+                      changeres.text = "They ambushed on each other, both took each other's attacks";
                     }
                 }
-                    if (BananaForest.Count > 2)
+                 if (BananaForest.Count > 2)
                 {
-                    if(ambush >= 0)
+                    if(ambush != 1)
                     {
                        foreach(string plr in BananaForest)
                         {
                         GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(plr).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + 1;
                         }
+                         changeres.text = "Chaos happened everyone took 1 damage";
+                    }
+                     if(ambush == 1)
+                    {
+                       int ambushedplr = -1;
+                      for(int i = 0;i < BananaForest.Count;i++)
+                        {
+                        if (GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("Action").value == "Ambush")
+                            {
+                                ambushedplr = i ;
+                            }
+                        }
+                        for(int i = 0;i < BananaForest.Count;i++)
+                        {
+                        if(i != ambushedplr)
+                            {
+                            GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value = (int)GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("StoredDamage").value + (int)GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("Damage").value;
+                            if (GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("Action").value == "Gather Banana")
+                                {
+                                GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredBanana").value = (int)GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredBanana").value + 3;
+                                }
+                            if (GameObject.Find(BananaForest[i]).GetComponent<Variables>().declarations.GetDeclaration("Action").value == "Cut Tree")
+                                {
+                                GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredWood").value = (int)GameObject.Find(BananaForest[ambushedplr]).GetComponent<Variables>().declarations.GetDeclaration("StoredWood").value + 1;
+                                }
+                                 changeres.text = BananaForest[ambushedplr] + " ambushed on everyone and stole everything!";
+                            }
+                        }  
                     }
                 }
+             await Task.Delay(4000);
+            Destroy(cloneui);
             }
 
-   
             //clear all action
             for(int i = 1;i<=4;i++)
             {
@@ -132,6 +228,10 @@ public class Gamerule : MonoBehaviour
                     //pullstored data
                     playerVars.declarations.GetDeclaration("Wood").value = (int)playerVars.declarations.GetDeclaration("Wood").value + (int)playerVars.declarations.GetDeclaration("StoredWood").value;
                     playerVars.declarations.GetDeclaration("Banana").value = (int)playerVars.declarations.GetDeclaration("Banana").value + (int)playerVars.declarations.GetDeclaration("StoredBanana").value;
+                    if ((int)playerVars.declarations.GetDeclaration("Banana").value > 5)
+                        {
+                        playerVars.declarations.GetDeclaration("Banana").value = 5;
+                        }
                     playerVars.declarations.GetDeclaration("Stone").value = (int)playerVars.declarations.GetDeclaration("Stone").value + (int)playerVars.declarations.GetDeclaration("StoredStone").value;
                     playerVars.declarations.GetDeclaration("Health").value = (int)playerVars.declarations.GetDeclaration("Health").value - (int)playerVars.declarations.GetDeclaration("StoredDamage").value;
 
